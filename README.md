@@ -1,36 +1,90 @@
 # Continuum XR
 
-Continuum XR (CXR) is an open, runtime-first extended reality platform focused on longevity, portability, and hardware independence.
+**Continuum XR** (CXR) is an open-source, privacy-first extended reality operating system built to keep standalone VR and AR hardware usable long after vendor end-of-life.
 
-The goal of Continuum XR is not to replace existing XR ecosystems, but to preserve and extend the usable life of XR hardware by decoupling runtimes from vendor-controlled lifecycles.
+Modern XR headsets are powerful, expensive devices that become unusable when companies shut down stores, abandon software, or lock hardware behind proprietary services. Continuum XR exists to break that cycle.
 
-## Project status
+**Website:** [continuumxr.org](https://continuumxr.org)
 
-Continuum XR is in early architectural definition.
+---
 
-- There are no builds
-- There is no ETA
-- There is no supported hardware list yet
+## What Continuum XR is
 
-The current focus is correctness of structure and interfaces, not implementation speed.
-
-## What this repository contains
-
-- A skeletal runtime layout
-- Architecture and design documentation
-- Clearly defined non-goals to prevent premature scope creep
-
-## Where to start reading
-
-- [`docs/vision.md`](docs/vision.md) — full original vision and rationale
-- [`docs/architecture.md`](docs/architecture.md) — high-level system design and philosophy
-- Folder-level READMEs — explain intent and boundaries of each subsystem
+- A **runtime-first XR platform** built around OpenXR
+- Built on **AOSP** for hardware compatibility, with a clean architecture that allows future evolution
+- A **privacy-by-architecture** system where all sensor data stays on your device
+- A **portable OS** that installs via standard fastboot on Treble-compliant devices
+- A **spatial operating system** targeting true multitasking — multiple 2D and 3D apps coexisting in shared space
 
 ## What Continuum XR is not
 
-- A fork of Android or AOSP
-- A custom XR application framework
-- A vendor-specific SDK
+- A fork of an existing XR operating system
+- A vendor store or account platform
+- A telemetry or data-collection system
 - A promise of near-term usability
+- Dependent on Google services or proprietary cloud APIs
 
-Continuum XR treats XR infrastructure as long-lived system software, not disposable product firmware.
+## Project status
+
+CXR is in **Phase 1 (complete) → Phase 2 (next)**.
+
+Phase 1 established the architecture, contracts, and documentation. Phase 2 will produce the first bootable system image (`cxr-bootstrap`) — an AOSP-based image that boots into CXR Shell on the Android emulator.
+
+There are no public builds yet. See the [Roadmap](ROADMAP.md) for the full phase sequence.
+
+## Core principles
+
+**Privacy by architecture** — All sensor data (cameras, eye tracking, hand tracking, microphones, depth sensors) stays on your device by default. No telemetry, no cloud dependency, no account required. Apps receive the minimum processed output needed for their stated purpose — never raw sensor streams. See [Privacy Architecture](docs/privacy-architecture.md).
+
+**Hardware longevity** — Your headset should remain usable without vendor permission. Continuum XR decouples the OS from vendor lifecycles and delivers device-specific support through installable packs, not baked OS images.
+
+**Runtime-first design** — OpenXR is the application contract. Hardware capabilities are supplied by modular providers. The runtime orchestrates providers, reports status honestly, and fails loudly when something is missing. See [Architecture](docs/architecture.md).
+
+**User ownership** — No vendor store. No mandatory account. No forced controllers for setup. The system boots and functions fully offline. The user controls the reality boundary — CXR never decides when to switch between passthrough and virtual.
+
+## Design direction
+
+CXR's design language is called **Material Flow** — an adaptive visual system where UI materials respond to context. Glass aesthetics in passthrough mode, solid materials in virtual environments, organic warmth throughout. See [Design Philosophy](docs/design-philosophy.md).
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Vision](docs/vision.md) | Project mission and rationale |
+| [Architecture](docs/architecture.md) | Runtime-first design, provider model |
+| [Privacy Architecture](docs/privacy-architecture.md) | Sensor data handling, permission model, audit system |
+| [Design Philosophy](docs/design-philosophy.md) | UX direction, Material Flow, interaction principles |
+| [Providers](docs/providers.md) | Provider contracts and status model |
+| [Profiles](docs/profiles.md) | Device profile format and validation |
+| [Capability Status Schema](docs/capability-status-schema.md) | Machine-readable status output |
+| [Runtime Lifecycle](docs/runtime-lifecycle.md) | Boot sequence and state model |
+| [Roadmap](ROADMAP.md) | Phase sequence and guiding principles |
+| [Phase 2 Plan](docs/phase2-implementation-plan.md) | Bootable AOSP image spec |
+| [Phase 3 Plan](docs/phase3-runtime-implementation-plan.md) | Runtime scaffolding spec |
+
+## Repository structure
+
+```
+continuum/
+├── docs/           Architecture, contracts, decisions, and plans
+│   └── adr/        Architecture Decision Records
+├── profiles/       Device profiles (provider composition per device)
+│   └── example/    Stub-only example profile
+├── providers/      Provider interfaces and implementations (future)
+├── runtime/        Runtime core (future)
+├── tools/          Developer utilities and validators
+├── ROADMAP.md      Phase sequence
+├── CONTRIBUTING.md  Contribution guidelines
+├── STATUS.md       Current project status
+└── LICENSE         Apache 2.0
+```
+
+## Contributing
+
+CXR is in early architectural definition. The priority is correctness of structure and contracts — not feature velocity.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for what to contribute now and what to wait on.
+
+## License
+
+Apache 2.0
