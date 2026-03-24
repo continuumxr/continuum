@@ -243,13 +243,36 @@ CXR's system navigation is a curved surface — the Arc — that wraps around th
 user at a comfortable distance. The Arc follows a 120-degree curve but only
 occupies the space it needs within that curvature.
 
+The Arc's information architecture follows a universal pattern found across
+every major operating system — mobile, desktop, tablet, watch, and XR: status
+and awareness live at the top, apps and actions live at the bottom. This is
+decades of learned user behavior. CXR doesn't reinvent this mapping; it makes
+it spatial.
+
 ### Two zones
 
-- **Lower Arc** — apps, launcher, workspaces. The "doing" zone. This is where
-  the user goes to open things, switch between things, and arrange their space.
-- **Upper Arc** — notifications, quick settings, status (time, battery,
-  connectivity). The "awareness" zone. This is where the user glances to
-  check on things.
+- **Upper Arc — awareness.** Glanceable status and system-level information.
+  Time, date, battery, connectivity status (Wi-Fi, Bluetooth). Notification
+  indicator (entry point to the notification app). Quick settings toggles
+  (Grounded/Unbound switch, volume, brightness, mic, do not disturb, and
+  other common adjustments). Active media indicator when audio is playing.
+  The Upper Arc is for checking, not doing — the user glances, gets info,
+  and looks away.
+
+- **Lower Arc — action.** Apps, launching, and workspace management. Pinned
+  favorite apps (user-configured). Recently used apps. App drawer / launcher
+  (access to all installed apps). Search. Voice assistant entry point (if
+  enabled). The Lower Arc is for doing — the user goes here to open, switch,
+  and organize.
+
+Settings is a launchable app on the Lower Arc. The Upper Arc provides quick
+settings toggles for common adjustments, but deeper configuration lives in
+the full settings app.
+
+Specific layout, slot counts, and arrangement within each Arc will be
+determined through prototyping and user testing. The architectural split
+(awareness above, action below) is the design decision; the details are
+implementation decisions.
 
 ### Behavior
 
@@ -314,6 +337,97 @@ deserve attention and users must manually silence them.
 No badge counts. No accumulating red dots. No guilt. Missed notifications live
 in the notification app and the user checks when they choose.
 
+## App lifecycle
+
+Apps in CXR are spatial objects. They have presence, volume, and position. Their
+lifecycle — opening, minimizing, restoring, and closing — should reflect this.
+
+### Particle animation: the Aether dust
+
+All app lifecycle transitions use a unified particle animation system. UI
+surfaces materialize and dematerialize as particles — fine, grainy, dust-like
+— that coalesce into form or disperse back into nothing. The visual quality
+is organic and textural: think sand assembling into shape, or dust scattering
+in light. This matches the frosted, granular quality of the Aether material
+and reinforces the design philosophy that the interface emerges from and
+returns to an invisible medium.
+
+One particle system, all transitions. The only difference is where the
+particles go and whether they reassemble.
+
+### Three states
+
+| State | Visual | Location | Resources |
+|-------|--------|----------|-----------|
+| **Active** | Full size, full material | Workspace | Full |
+| **Minimized** | Rounded cubic icon | Arc (default) or pinned in place | Background tasks only |
+| **Closed** | Dispersed, gone | Nowhere | None |
+
+### App icons: rounded cubes
+
+App icons are rendered as small rounded cubes — spatial objects with volume,
+not flat sprites. They cast subtle shadows and feel like real things the user
+can pick up. When an app is minimized, it becomes one of these cubic icons.
+The cubes can live on the Lower Arc (default) or be pinned anywhere in the
+user's environment — placed on surfaces, grouped on shelves, arranged however
+the user wants. The workspace becomes as personal as a desk covered in your
+things.
+
+### Lifecycle transitions
+
+**Opening.** The user selects (pinch, click, tap) an app icon on the Arc or
+in the environment. Aether dust flows outward from the icon, coalescing into
+the app's full shape at a comfortable distance in front of the user. The
+particles gather, the form solidifies, the frosted material becomes legible.
+The app settles into position. If restoring from minimized, the particles
+flow from the icon back to the app's previously anchored position.
+
+**Minimizing.** The user grab/pinch flicks the app downward. The app disperses
+into particles that stream toward the Lower Arc, condensing into the rounded
+cubic icon. The icon settles into the Arc. The app retains its spatial
+position in memory — restoring will return it to where it was.
+
+Alternatively, the user can pin a minimized app in place rather than sending
+it to the Arc. The app shrinks to its cubic icon at its current spatial
+position. Useful for apps the user wants quick access to without visiting
+the Arc.
+
+**Throwing / anchoring.** A one-hand grab/pinch flick in any direction sends
+the app toward a surface or position in the environment. The app travels in
+the flick direction and anchors where it lands — on a wall, a table, or
+floating at the target position. This teaches spatial arrangement through
+natural physical gesture.
+
+**Restoring.** The user grab/pinch flicks the minimized icon upward (on the
+Arc) or selects a pinned icon. Particles flow outward from the icon,
+reassembling at the app's previously anchored position.
+
+**Closing.** The user grab/pinch holds the app with both hands for 2–3 seconds.
+Full dispersal. The particles scatter outward and dissolve into nothing —
+back to the Aether. Requiring both hands makes closure a deliberate act that
+cannot happen accidentally. The close action is also available via the menu
+bar icon for users who cannot use both hands.
+
+**Resizing.** Two-hand grab/pinch flick outward to enlarge, inward to shrink.
+The app scales smoothly, with the Aether material maintaining its quality at
+any size.
+
+### App menu bar
+
+Every active app has a contextual menu bar (above or below the app, user
+preference or context-dependent) that provides gaze-and-pinch accessible
+icons for all lifecycle actions: minimize, restore, close, resize. This
+ensures that every gesture has an equivalent accessible action for users who
+cannot perform complex hand gestures, or for hardware tiers without hand
+tracking (using gaze-dwell and click instead).
+
+### Gesture configurability
+
+The gestures described above are initial defaults based on physical intuition.
+As CXR evolves and user testing reveals more intuitive alternatives, gestures
+should be refinable. The system should also support user-configurable gesture
+mapping in the long term — different users may find different gestures natural.
+
 ## Hardware capability tiers
 
 CXR is designed to run across a wide range of hardware. Features adapt to
@@ -363,10 +477,78 @@ something in between. The OS provides the tools and respects the choice.
 The single exception is the safety boundary / guardian system, which may force
 passthrough for user safety. This is consistent with all existing platforms and
 is a reasonable safety decision — the system protects the user from physical
-harm, not from their own choices about reality. The guardian is only active in
-Unbound mode (in Grounded mode, the user can see their physical space). The
-boundary follows Aether's visual language — a soft gradient that becomes
-visible as the user approaches the edge, not a hard grid wall.
+harm, not from their own choices about reality.
+
+### Guardian / boundary system
+
+The guardian is active in Unbound mode only. In Grounded mode, the user can
+see their physical space and no boundary is needed.
+
+Guardian capability scales with hardware:
+
+**6-DOF with depth sensors (Mid+ / Full tier).** The boundary is built
+automatically and silently. Any time the device has spatial mapping active —
+during the NUX, during Grounded mode, during boot — it maps the room and
+calculates safe distances from walls and obstacles using depth/ToF/IR
+illuminator data. The user never "sets up" the guardian. There is no setup
+step when switching to Unbound for the first time. The boundary is already
+there.
+
+**6-DOF without depth sensors (Mid tier).** The device has positional tracking
+but cannot auto-detect room geometry. During the NUX or the first switch to
+Unbound, the system asks the user to walk to the edges of their space. Not
+"draw your boundary" — just walk the perimeter naturally. The system tracks
+the path and defines the safe zone from that movement. One lap, done. After
+that, the boundary behaves identically to the depth-sensor experience.
+
+**Roadmap: Gaussian splatting for Basic+ tier.** Devices with RGB cameras but
+no depth sensors (Basic+ tier) may be able to build 3D room geometry using
+gaussian splatting — reconstructing the space from regular camera feeds as
+the user moves through it over time. This would not be real-time; the system
+builds the map incrementally as a background process across multiple sessions.
+First session uses the walk-the-perimeter fallback. Subsequent sessions
+progressively refine the spatial model. Once the model is sufficient, the
+guardian upgrades silently to auto-detected boundaries. The user never knows
+the transition happened. This requires research into on-device compute
+efficiency and is a roadmap item, not a launch feature.
+
+**Roadmap: Rudimentary positional tracking for Basic tier.** 3-DOF devices
+with RGB cameras may be able to derive limited positional information through
+gaussian splatting combined with IMU and other sensor data — potentially
+enabling basic spatial awareness on hardware that currently has none. This
+is deep research territory and highly speculative, but worth exploring as
+splatting techniques become more efficient.
+
+**3-DOF without cameras (Basic tier).** No spatial boundary is possible. The
+user is presumed seated or stationary. The guardian does not exist on this
+tier.
+
+**Privacy.** Gaussian splatting and spatial mapping build a 3D reconstruction
+of the user's physical space. This is sensitive data. All spatial data —
+whether from depth sensors or splatting — is stored locally, encrypted, and
+never leaves the device. This is consistent with CXR's privacy architecture
+and must be clearly disclosed to the user.
+
+**Invisible until needed.** Regardless of how the boundary was established,
+it behaves the same during use. The boundary is not visible during normal
+Unbound activity. When the user approaches the edge of their safe area, a
+soft gradient fades in at the floor — warm, organic, using the Aether
+material language. The closer they get, the more visible it becomes. At the
+very edge, passthrough bleeds through softly, giving the user a window into
+their physical space right where they need it.
+
+**Adjustable in settings.** If the user wants to manually reshape their safe
+zone, that option exists in settings. But the default is: the system handled
+it silently.
+
+**Battery consideration.** Continuous spatial mapping and splatting consume
+power. The implementation should balance mapping frequency with battery
+life — periodic rescans, motion-triggered mapping, or other optimization
+strategies. The design intent is clear; the engineering solution will be
+refined during implementation.
+
+The boundary should feel protective, not restrictive. More like the edge of
+a clearing than the wall of a cage.
 
 This is both a UX principle and a privacy principle. A system that controls
 when you see reality is a system that controls when you *don't* — and CXR
@@ -554,18 +736,17 @@ the visual layer is themeable:
 
 1. How far do we take non-planar interaction? (Planar windows as default with
    spatial options? A fully spatial shell? App-level freedom?)
-2. What specific controls live on the Upper and Lower Arcs?
-3. What does the guardian / boundary setup experience feel like in detail?
-4. How do virtual environments work? (User-created? Marketplace? Built-in?
+2. How do virtual environments work? (User-created? Marketplace? Built-in?
    Interactive and customizable like Rift Home?)
-5. What does the "mind palace" concept look like concretely?
-6. How do accessibility features work in spatial computing?
-7. How does multi-user / shared space work?
-8. App lifecycle in 3D: what happens when you open, minimize, and close
-   a spatial app?
-9. How do windows/apps migrate between Grounded and Unbound modes?
-10. What is the "awe moment" equivalent for Grounded mode?
-11. Final terminology for Grounded / Unbound.
+3. What does the "mind palace" concept look like concretely?
+4. How do accessibility features work in spatial computing?
+5. How does multi-user / shared space work?
+6. How do windows/apps migrate between Grounded and Unbound modes?
+7. What is the "awe moment" equivalent for Grounded mode?
+8. Final terminology for Grounded / Unbound.
+9. App menu bar placement: above or below the app? Contextual or fixed?
+10. Arc layout specifics: slot counts, arrangement, and visual design
+    (to be determined through prototyping).
 
 ## Implementation phasing
 
