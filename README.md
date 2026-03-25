@@ -60,6 +60,7 @@ ContinuumXR's system-level design language is called **Aether** — named for th
 | [Capability Status Schema](docs/capability-status-schema.md) | Machine-readable status output |
 | [Runtime Lifecycle](docs/runtime-lifecycle.md) | Boot sequence and state model |
 | [Roadmap](ROADMAP.md) | Phase sequence and guiding principles |
+| [Build Guide](docs/build-guide.md) | Step-by-step AOSP build instructions |
 | [Phase 2 Plan](docs/phase2-implementation-plan.md) | Bootable AOSP image spec |
 | [Phase 3 Plan](docs/phase3-runtime-implementation-plan.md) | Runtime scaffolding spec |
 

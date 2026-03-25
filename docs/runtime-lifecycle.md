@@ -18,12 +18,12 @@ The runtime is not responsible for:
 - hiding missing capabilities behind fake success paths
 - storing calibration in git or build artifacts
 
-## Process model (Phase 1–2 assumptions)
+## Process model (Phase 2–3 assumptions)
 
 Initial assumption: a single userland runtime process that:
 - owns provider lifecycle
 - owns diagnostics/status reporting
-- hosts OpenXR entrypoints (Phase 2+)
+- hosts OpenXR entrypoints (Phase 4+)
 
 This may evolve into multiple processes later (e.g., compositor separation),
 but Phase 1–2 should optimize for clarity and debuggability.
@@ -61,7 +61,7 @@ but Phase 1–2 should optimize for clarity and debuggability.
    - per-provider status
    - aggregate capability status
 
-6. **Expose OpenXR (Phase 2+)**
+6. **Expose OpenXR (Phase 4+)**
    OpenXR exposure should not claim capabilities that providers do not supply.
 
 ## Provider selection rules

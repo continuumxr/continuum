@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <style name="CxrShellTheme" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+    <item name="android:windowBackground">#080D1A</item>
+    <item name="android:statusBarColor">#080D1A</item>
+    <item name="android:navigationBarColor">#080D1A</item>
+    <item name="android:windowLightStatusBar">false</item>
+  </style>
+</resources>

@@ -186,7 +186,7 @@ Issues are designed to be actionable and stable.
 - `PROVIDER_INIT_FAILED`
 - `PROVIDER_START_FAILED`
 
-## Minimal output requirement (Phase 2 target)
+## Minimal output requirement (Phase 3 target)
 
 A minimal status dump should include at least:
 - runtime state

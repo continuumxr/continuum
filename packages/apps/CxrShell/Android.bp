@@ -1,0 +1,16 @@
+android_app {
+    name: "CxrShell",
+    srcs: ["src/**/*.kt"],
+    resource_dirs: ["res"],
+    manifest: "AndroidManifest.xml",
+    platform_apis: true,
+    certificate: "platform",
+    privileged: true,
+    static_libs: [
+        "androidx.appcompat_appcompat",
+    ],
+    kotlincflags: ["-Xjvm-default=all"],
+    optimize: {
+        enabled: false,
+    },
+}

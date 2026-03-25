@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-profiles:
+    name: Validate profiles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate all profiles
+        run: |
+          python3 tools/validate-profile.py profiles/example/profile.json
+
+  lint-shell:
+    name: Lint CXR Shell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Kotlin files exist
+        run: |
+          find packages/apps/CxrShell/src -name "*.kt" | head -20
+
+      - name: Verify AndroidManifest.xml
+        run: |
+          python3 -c "
+          import xml.etree.ElementTree as ET
+          tree = ET.parse('packages/apps/CxrShell/AndroidManifest.xml')
+          root = tree.getroot()
+          ns = {'android': 'http://schemas.android.com/apk/res/android'}
+          activities = root.findall('.//activity')
+          assert len(activities) > 0, 'No activities found'
+          filters = root.findall('.//intent-filter/category')
+          categories = [f.get('{http://schemas.android.com/apk/res/android}name') for f in filters]
+          assert 'android.intent.category.HOME' in categories, 'Missing HOME category'
+          print('AndroidManifest.xml: valid HOME launcher activity')
+          "
+
+      - name: Verify Android.bp syntax
+        run: |
+          python3 -c "
+          with open('packages/apps/CxrShell/Android.bp') as f:
+              content = f.read()
+          assert 'android_app' in content, 'Missing android_app module'
+          assert 'CxrShell' in content, 'Missing CxrShell name'
+          print('Android.bp: valid Soong module definition')
+          "
+
+  lint-makefiles:
+    name: Lint device makefiles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify x86_64 product definition
+        run: |
+          test -f device/cxr/cxr_x86_64/AndroidProducts.mk
+          test -f device/cxr/cxr_x86_64/cxr_x86_64.mk
+          grep -q "cxr_x86_64-userdebug" device/cxr/cxr_x86_64/AndroidProducts.mk
+          grep -q "PRODUCT_PACKAGES += CxrShell" device/cxr/cxr_x86_64/cxr_x86_64.mk
+          echo "x86_64 product definition: valid"
+
+      - name: Verify arm64 product definition
+        run: |
+          test -f device/cxr/cxr_arm64/AndroidProducts.mk
+          test -f device/cxr/cxr_arm64/cxr_arm64.mk
+          grep -q "cxr_arm64-userdebug" device/cxr/cxr_arm64/AndroidProducts.mk
+          grep -q "PRODUCT_PACKAGES += CxrShell" device/cxr/cxr_arm64/cxr_arm64.mk
+          echo "arm64 product definition: valid"

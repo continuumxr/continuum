@@ -36,8 +36,9 @@ but the orchestration layer should remain high-level where possible.
 ## Consequences
 - Phase 2 CXR Shell is Kotlin + standard Android UI framework.
 - Phase 3 runtime is pure Kotlin targeting Android.
-- Gradle with Kotlin DSL is the build system for CXR components
-  (AOSP build system handles the overall image).
+- Soong (Android.bp) is the build system for CXR system components
+  (CXR Shell, CxrRuntime) since they are built into the AOSP image.
+  Gradle is reserved for standalone tooling that runs outside AOSP.
 - Provider interface is a Kotlin interface, not a C ABI.
 - Rust/C++ boundaries are deferred until they are actually needed.
 - No premature optimization of the orchestration layer.

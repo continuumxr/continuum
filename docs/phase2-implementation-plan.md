@@ -107,42 +107,55 @@ The shell is intentionally minimal. It is NOT the final XR UI.
 ## Build integration
 
 ### Repository structure
+
+CXR-specific build artifacts live directly in the AOSP source tree. The
+`continuum/` repo contains documentation, profiles, and tooling. CXR device
+definitions and system apps are placed into the AOSP tree during setup.
+
 ```
-continuum/
-├── aosp/                    # AOSP source tree (gitignored, not committed)
-├── packages/
-│   └── apps/
-│       └── CxrShell/        # CXR Shell application
-├── overlay/
-│   └── cxr/                 # Resource overlays (launcher replacement, branding)
-├── build/
-│   └── cxr_product.mk       # Product makefile for CXR builds
-├── vendor/
-│   └── cxr/                 # CXR vendor partition additions
-├── docs/                    # (existing)
-├── profiles/                # (existing)
-├── providers/               # (existing, Phase 3)
-├── runtime/                 # (existing, Phase 3)
-├── tools/                   # (existing)
+aosp/                              # AOSP source tree (separate from continuum repo)
+├── device/cxr/
+│   ├── cxr_x86_64/                # x86_64 emulator product definition
+│   │   ├── AndroidProducts.mk
+│   │   └── cxr_x86_64.mk
+│   └── cxr_arm64/                 # ARM64 hardware product definition
+│       ├── AndroidProducts.mk
+│       └── cxr_arm64.mk
+├── packages/apps/
+│   └── CxrShell/                  # CXR Shell (launcher replacement)
+│       ├── Android.bp
+│       ├── AndroidManifest.xml
+│       ├── res/
+│       └── src/
+└── ...                            # Standard AOSP tree
+
+continuum/                         # This repo
+├── docs/                          # Architecture, contracts, decisions, plans
+├── profiles/                      # Device profiles
+├── providers/                     # Provider interfaces (Phase 3)
+├── runtime/                       # Runtime core (Phase 3)
+├── tools/                         # Developer utilities and validators
 └── README.md
 ```
 
 ### Build flow
 ```bash
 # 1. Init AOSP
+cd ~/cxr/aosp
 repo init -u https://android.googlesource.com/platform/manifest \
   -b android-latest-release --depth=1
 
 # 2. Sync
 repo sync -c --no-clone-bundle --no-tags -j$(nproc)
 
-# 3. Apply CXR overlay
-# (symlink or copy CXR packages/overlay/vendor into AOSP tree)
+# 3. Copy CXR device definitions and apps into AOSP tree
+cp -r /path/to/continuum/device/cxr/ device/cxr/
+cp -r /path/to/continuum/packages/apps/CxrShell/ packages/apps/CxrShell/
 
 # 4. Build
 source build/envsetup.sh
 lunch cxr_x86_64-userdebug    # emulator target
-m                              # or: m -j$(nproc)
+m -j$(nproc)
 
 # 5. Run emulator
 emulator
