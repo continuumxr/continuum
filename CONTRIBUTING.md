@@ -23,4 +23,6 @@ The priority is correctness of structure, contracts, and observability—not fea
 - Don’t add calibration data to the repo.
 
 ## Communication
+Join the [ContinuumXR Discord](https://discord.gg/8YgAkF8Tpx) for questions, discussion, and device testing coordination — it's faster than opening an issue for anything that isn't a concrete proposal or bug.
+
 If proposing a major architectural change, add or update an ADR in `docs/adr/`.
