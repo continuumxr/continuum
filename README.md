@@ -5,7 +5,7 @@
 Modern XR headsets are powerful, expensive devices that become unusable when companies shut down stores, abandon software, or lock hardware behind proprietary services. ContinuumXR exists to break that cycle.
 
 **Website:** [continuumxr.org](https://continuumxr.org)
-
+**Discord:** [discord.gg/MdUzETwkwU](https://discord.gg/MdUzETwkwU)
 ---
 
 ## What ContinuumXR is
